@@ -1,6 +1,6 @@
-import 'package:agent1/common/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../widgets/colors.dart';
 import 'guests_controller.dart';
 
 class GuestsField extends StatefulWidget {
@@ -26,7 +26,7 @@ class _GuestsFieldState extends State<GuestsField> {
         ),
         child: Row(
           children: [
-             Icon(Icons.person_outline, color: TColors.primary),
+            const Icon(Icons.person_outline, color: TColors.primary),
             const SizedBox(width: 12),
             Obx(() => Text(
               '${controller.roomCount.value} Rooms, ${controller.totalAdults} Adults, ${controller.totalChildren} Children',
@@ -85,12 +85,12 @@ class _GuestsFieldState extends State<GuestsField> {
           children: [
             IconButton(
               onPressed: controller.decrementRooms,
-              icon:  Icon(Icons.remove_circle_outline, color: TColors.primary),
+              icon: const Icon(Icons.remove_circle_outline, color: TColors.primary),
             ),
             Text('${controller.roomCount.value}'),
             IconButton(
               onPressed: controller.incrementRooms,
-              icon:  Icon(Icons.add_circle_outline, color: TColors.primary),
+              icon: const Icon(Icons.add_circle_outline, color: TColors.primary),
             ),
           ],
         )),
@@ -103,7 +103,7 @@ class _GuestsFieldState extends State<GuestsField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Room ${roomIndex + 1}',
-            style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: TColors.primary)),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: TColors.primary)),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,12 +113,12 @@ class _GuestsFieldState extends State<GuestsField> {
               children: [
                 IconButton(
                   onPressed: () => controller.decrementAdults(roomIndex),
-                  icon:  Icon(Icons.remove_circle_outline, color: TColors.primary),
+                  icon: const Icon(Icons.remove_circle_outline, color: TColors.primary),
                 ),
                 Text('${controller.rooms[roomIndex].adults.value}'),
                 IconButton(
                   onPressed: () => controller.incrementAdults(roomIndex),
-                  icon:  Icon(Icons.add_circle_outline, color: TColors.primary),
+                  icon: const Icon(Icons.add_circle_outline, color: TColors.primary),
                 ),
               ],
             )),
@@ -132,12 +132,12 @@ class _GuestsFieldState extends State<GuestsField> {
               children: [
                 IconButton(
                   onPressed: () => controller.decrementChildren(roomIndex),
-                  icon:  Icon(Icons.remove_circle_outline, color: TColors.primary),
+                  icon: const Icon(Icons.remove_circle_outline, color: TColors.primary),
                 ),
                 Text('${controller.rooms[roomIndex].children.value}'),
                 IconButton(
                   onPressed: () => controller.incrementChildren(roomIndex),
-                  icon: Icon(Icons.add_circle_outline, color: TColors.primary),
+                  icon: const Icon(Icons.add_circle_outline, color: TColors.primary),
                 ),
               ],
             )),

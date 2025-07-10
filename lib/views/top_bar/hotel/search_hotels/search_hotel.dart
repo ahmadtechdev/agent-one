@@ -1,15 +1,14 @@
-
 import 'package:agent1/common/color_extension.dart';
+import 'package:agent1/services/api_service_hotel.dart';
+import 'package:agent1/views/top_bar/hotel/hotel/hotel_date_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../../services/api_service_hotel.dart';
 import 'search_hotel_controller.dart';
 import 'select_room/selectroom.dart';
-
 
 class HotelScreen extends StatefulWidget {
   const HotelScreen({super.key});
@@ -20,15 +19,25 @@ class HotelScreen extends StatefulWidget {
 
 class _HotelScreenState extends State<HotelScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Initialize the filter data when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final SearchHotelController controller =
+          Get.find<SearchHotelController>();
+      controller.filterhotler();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final SearchHotelController controller = Get.find<SearchHotelController>();
+
     Widget buildRatingBar(double rating) {
       return RatingBarIndicator(
         rating: rating,
-        itemBuilder: (context, index) => const Icon(
-          Icons.star,
-          color: Colors.orange,
-        ),
+        itemBuilder:
+            (context, index) => const Icon(Icons.star, color: Colors.orange),
         itemCount: 5,
         itemSize: 20.0,
         direction: Axis.horizontal,
@@ -40,94 +49,95 @@ class _HotelScreenState extends State<HotelScreen> {
         context: context,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return Obx(() => Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Filter by Rating',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+          return Obx(
+            () => Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Filter by Rating',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 16),
-                      Column(
-                        children: List.generate(6, (index) {
-                          if (index == 5) {
-                            return Row(
-                              children: [
-                                Checkbox(
-                                  value: !controller.selectedRatings
-                                      .contains(true),
-                                  onChanged: (value) {
-                                    if (value == true) {
-                                      controller.resetFilters();
-                                    }
-                                  },
-                                  activeColor: TColors.primary,
-                                ),
-                                const Text('All Hotels'),
-                              ],
-                            );
-                          }
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      children: List.generate(6, (index) {
+                        if (index == 5) {
                           return Row(
                             children: [
                               Checkbox(
-                                value: controller.selectedRatings[index],
+                                value:
+                                    !controller.selectedRatings.contains(true),
                                 onChanged: (value) {
-                                  controller.selectedRatings[index] = value!;
+                                  if (value == true) {
+                                    controller.resetFilters();
+                                  }
                                 },
                                 activeColor: TColors.primary,
                               ),
-                              buildRatingBar((5 - index).toDouble()),
-                              const SizedBox(width: 8),
-                              Text(
-                                '(${controller.hotels.where((hotel) => hotel['rating'] == 5 - index).length})',
-                                style: const TextStyle(color: Colors.grey),
-                              ),
+                              const Text('All Hotels'),
                             ],
                           );
-                        }),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.back();
-
-                              // setState(() {
-                              //   selectedOption = 'Recommended';
-                              // });
-                              controller.resetFilters();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                              foregroundColor: Colors.black,
+                        }
+                        int starRating = 5 - index;
+                        return Row(
+                          children: [
+                            Checkbox(
+                              value: controller.selectedRatings[index],
+                              onChanged: (value) {
+                                controller.selectedRatings[index] = value!;
+                              },
+                              activeColor: TColors.primary,
                             ),
-                            child: const Text('Reset'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              controller.filterByRating();
-                              Get.back();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: TColors.primary,
-                              foregroundColor: Colors.white,
+                            buildRatingBar(starRating.toDouble()),
+                            const SizedBox(width: 8),
+                            Text(
+                              '(${controller.getHotelCountByRating(starRating)})',
+                              style: const TextStyle(color: Colors.grey),
                             ),
-                            child: const Text('Confirm'),
+                          ],
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            controller.resetFilters();
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: Colors.black,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          child: const Text('Reset'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            controller.filterByRating();
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Confirm'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ));
+              ),
+            ),
+          );
         },
       );
     }
@@ -138,10 +148,7 @@ class _HotelScreenState extends State<HotelScreen> {
           onPressed: () {
             Get.back();
           },
-          icon:  Icon(
-            Icons.arrow_back,
-            color: TColors.primary,
-          ),
+          icon: Icon(Icons.arrow_back, color: TColors.primary),
         ),
       ),
       body: Column(
@@ -156,15 +163,17 @@ class _HotelScreenState extends State<HotelScreen> {
                 SizedBox(
                   height: 50,
                   child: TextField(
-                    style:  TextStyle(color: TColors.black),
+                    style: TextStyle(color: TColors.black),
                     onChanged: (value) {
                       controller.searchHotelsByName(value);
                     },
                     decoration: InputDecoration(
                       hintText: 'Search for hotels...',
-                      hintStyle:  TextStyle(color: TColors.black),
-                      prefixIcon:
-                           Icon(Icons.search, color: TColors.primary),
+                      hintStyle: TextStyle(color: TColors.black),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: TColors.primary,
+                      ),
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -173,7 +182,6 @@ class _HotelScreenState extends State<HotelScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
                 // Buttons: Filter, Sort, Price
                 Row(
@@ -184,7 +192,6 @@ class _HotelScreenState extends State<HotelScreen> {
                     }),
                     _buildButton(context, Icons.sort, 'Sort', () {
                       _showSortOptionsBottomSheet(context, controller);
-                      // Implement Sort Action
                     }),
                     _buildButton(context, Icons.attach_money, 'Price', () {
                       _showPriceRangeBottomSheet(context, controller);
@@ -220,24 +227,28 @@ class _HotelScreenState extends State<HotelScreen> {
     );
   }
 
-  Widget _buildButton(BuildContext context, IconData icon, String label,
-      VoidCallback onPressed) {
+  Widget _buildButton(
+    BuildContext context,
+    IconData icon,
+    String label,
+    VoidCallback onPressed,
+  ) {
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, color: TColors.text),
-      label: Text(label, style: const TextStyle(color: TColors.text)),
+      label: Text(label, style: TextStyle(color: TColors.text)),
       style: ElevatedButton.styleFrom(
         backgroundColor: TColors.primary.withOpacity(0.3),
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
 
   void _showSortOptionsBottomSheet(
-      BuildContext context, SearchHotelController controller) {
+    BuildContext context,
+    SearchHotelController controller,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -300,10 +311,8 @@ class _HotelScreenState extends State<HotelScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Get.back();
-
-                          //
                           controller.resetFilters();
+                          Get.back();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey[200],
@@ -334,12 +343,20 @@ class _HotelScreenState extends State<HotelScreen> {
   }
 
   void _showPriceRangeBottomSheet(
-      BuildContext context, SearchHotelController controller) {
-    // Calculate min and max prices dynamically from the hotels list
-    final prices = controller.hotels
-        .map((hotel) =>
-            double.parse(hotel['price'].toString().replaceAll(',', '').trim()))
-        .toList();
+    BuildContext context,
+    SearchHotelController controller,
+  ) {
+    // Calculate min and max prices dynamically from the original hotels list
+    final prices =
+        controller.originalHotels
+            .map(
+              (hotel) =>
+                  double.tryParse(
+                    hotel['price'].toString().replaceAll(',', '').trim(),
+                  ) ??
+                  0.0,
+            )
+            .toList();
 
     double minPrice =
         prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0.0;
@@ -407,9 +424,9 @@ class _HotelScreenState extends State<HotelScreen> {
                           setState(() {
                             lowerValue = minPrice;
                             upperValue = maxPrice;
-                            controller.resetFilters();
-                            Get.back();
                           });
+                          controller.resetFilters();
+                          Get.back();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey[200],
@@ -446,14 +463,13 @@ class HotelCard extends StatelessWidget {
   HotelCard({super.key, required this.hotel});
 
   final SearchHotelController controller = Get.find<SearchHotelController>();
+  final HotelDateController dateController = Get.find<HotelDateController>();
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
       child: Column(
         children: <Widget>[
@@ -499,11 +515,15 @@ class HotelCard extends StatelessWidget {
                       onTap: () {
                         Get.to(
                           () => MapScreen(
-                            latitude: double.tryParse(
-                                    hotel['latitude']?.toString() ?? '') ??
+                            latitude:
+                                double.tryParse(
+                                  hotel['latitude']?.toString() ?? '',
+                                ) ??
                                 0.0,
-                            longitude: double.tryParse(
-                                    hotel['longitude']?.toString() ?? '') ??
+                            longitude:
+                                double.tryParse(
+                                  hotel['longitude']?.toString() ?? '',
+                                ) ??
                                 0.0,
                             hotelName: hotel['name'] ?? 'Unknown Hotel',
                           ),
@@ -514,7 +534,7 @@ class HotelCard extends StatelessWidget {
                         color: TColors.primary,
                         size: 30,
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -528,19 +548,19 @@ class HotelCard extends StatelessWidget {
                       itemCount: 5,
                       itemSize: 15,
                       itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
-                      itemBuilder: (context, _) => const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
+                      itemBuilder:
+                          (context, _) =>
+                              const Icon(Icons.star, color: Colors.amber),
                       onRatingUpdate: (rating) {},
                     ),
                     const Spacer(),
                     Text(
-                      'USD ${(hotel['price'] ?? 0.0)}',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          color: TColors.text,
-                          fontWeight: FontWeight.bold),
+                      'PKR ${(((hotel['price'] ?? 0.0) / dateController.nights.value).round())}',
+                      style:  TextStyle(
+                        fontSize: 18,
+                        color: TColors.text,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -549,17 +569,25 @@ class HotelCard extends StatelessWidget {
           ),
           Container(
             height: 60,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.0,
+            ),
             child: ElevatedButton(
               onPressed: () {
+                controller.ratingstar.value =
+                    (hotel['rating'] as double).toInt();
                 controller.hotelCode.value = hotel['hotelCode'];
                 controller.hotelCity.value = hotel['hotelCity'];
+                controller.lat.value = hotel['latitude'];
+                controller.lon.value = hotel['longitude'];
 
                 controller.roomsdata.clear();
 
                 ApiServiceHotel().fetchRoomDetails(
-                    hotel['hotelCode'], controller.sessionId.value);
+                  hotel['hotelCode'],
+                  controller.sessionId.value,
+                );
                 controller.filterhotler();
                 Get.to(() => const SelectRoomScreen());
               },
@@ -571,8 +599,10 @@ class HotelCard extends StatelessWidget {
                 ),
                 minimumSize: const Size(double.infinity, 40),
               ),
-              child:  Text('Select Room',
-                  style: TextStyle(color: TColors.secondary)),
+              child:  Text(
+                'Select Room',
+                style: TextStyle(fontSize: 18,color: TColors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],
@@ -590,28 +620,28 @@ class HotelCard extends StatelessWidget {
         height: 200,
         width: double.infinity,
         fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          color: Colors.grey[300],
-          child:  Center(
-            child: CircularProgressIndicator(
-              color: TColors.primary,
+        placeholder:
+            (context, url) => Container(
+              color: Colors.grey[300],
+              child:  Center(
+                child: CircularProgressIndicator(color: TColors.primary),
+              ),
             ),
-          ),
-        ),
-        errorWidget: (context, url, error) => Image.asset(
-          'assets/img/cardbg/broken-image.png',
-          height: 200,
-          width: double.infinity,
-          fit: BoxFit.cover,
-        ),
+        errorWidget:
+            (context, url, error) => Image.asset(
+              'assets/img/cardbg/broken-image.png',
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
       );
     } else {
       // If not a URL, assume it's a local asset path
       return Image.asset(
-        imageUrl.isEmpty ? 'assets/img/cardbg/broken-image.png' : imageUrl,
+        imageUrl.isEmpty ? 'assets/images/hotel1.jpg' : imageUrl,
         height: 200,
         width: double.infinity,
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       );
     }
   }
@@ -642,10 +672,7 @@ class MapScreen extends StatelessWidget {
           onPressed: () {
             Get.back();
           },
-          icon:  Icon(
-            Icons.arrow_back,
-            color: TColors.primary,
-          ),
+          icon:  Icon(Icons.arrow_back, color: TColors.primary),
         ),
       ),
       body: GoogleMap(

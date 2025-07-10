@@ -1,3 +1,5 @@
+import 'package:agent1/common/color_extension.dart';
+import 'package:agent1/common_widget/app_bar.dart';
 import 'package:agent1/views/home/home.dart';
 import 'package:flutter/material.dart';
 
@@ -66,6 +68,32 @@ class TravelServicesHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Image.asset(
+          "assets/img/logo1.png",
+          height: 35,
+        ),
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Row(
+              children: [
+                Icon(Icons.headset_mic_outlined, color: TColors.primary),
+                SizedBox(width: 12),
+                Icon(Icons.person_outline, color: TColors.primary),
+
+
+
+
+                
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

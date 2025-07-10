@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:agent1/common/color_extension.dart';
+import 'package:agent1/views/top_bar/hotel/search_hotels/select_room/controller/select_room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -61,6 +62,7 @@ class _ImportantBookingDetailsCardState
     final searchHomeController = Get.find<SearchHotelController>();
     final hotelDateController = Get.find<HotelDateController>();
     final guestsController = Get.find<GuestsController>();
+    final slectroomcontroller = Get.find<SelectRoomController>();
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -78,12 +80,12 @@ class _ImportantBookingDetailsCardState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                 Text(
                   'Booking Details',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFFFAB00),
+                    color: TColors.primary,
                   ),
                 ),
                 Container(
@@ -92,25 +94,18 @@ class _ImportantBookingDetailsCardState
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFAB00).withOpacity(0.1),
+                    color: TColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: const Color(0xFFFFAB00),
-                      width: 1,
-                    ),
+                    border: Border.all(color: TColors.primary, width: 1),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.timer,
-                        size: 18,
-                        color: Color(0xFFFFAB00),
-                      ),
+                       Icon(Icons.timer, size: 18, color: TColors.primary),
                       const SizedBox(width: 4),
                       Text(
                         formattedTime,
-                        style: const TextStyle(
-                          color: Color(0xFFFFAB00),
+                        style:  TextStyle(
+                          color: TColors.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -122,7 +117,11 @@ class _ImportantBookingDetailsCardState
             ),
             const SizedBox(height: 16),
             _buildInfoRow(
-                Icons.hotel, 'Hotel', searchHomeController.hotelName.value, ''),
+              Icons.hotel,
+              'Hotel',
+              searchHomeController.hotelName.value,
+              '',
+            ),
             const Divider(height: 24),
             _buildInfoRow(
               Icons.calendar_today,
@@ -145,7 +144,7 @@ class _ImportantBookingDetailsCardState
               '${guestsController.roomCount.toString()} Room',
             ),
             const Divider(height: 24),
-            _buildPriceSection('14'),
+            _buildPriceSection(slectroomcontroller.totalPrice.value.toStringAsFixed(0)),
           ],
         ),
       ),
@@ -164,14 +163,10 @@ class _ImportantBookingDetailsCardState
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFAB00).withOpacity(0.1),
+            color: TColors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xFFFFAB00),
-            size: 20,
-          ),
+          child: Icon(icon, color: TColors.primary, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -180,10 +175,7 @@ class _ImportantBookingDetailsCardState
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
               const SizedBox(height: 4),
               Text(
@@ -195,10 +187,7 @@ class _ImportantBookingDetailsCardState
               ),
               Text(
                 secondaryInfo,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
           ),
@@ -211,7 +200,7 @@ class _ImportantBookingDetailsCardState
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFAB00).withOpacity(0.1),
+        color: TColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -219,14 +208,11 @@ class _ImportantBookingDetailsCardState
           const Text("Your time to proceed booking will expire in 15 minutes."),
           const SizedBox(height: 8),
           Align(
-              alignment: Alignment.centerRight,
-              child: _buildBadge("Refundable")),
-          const Divider(height: 16),
-          _buildPriceRow(
-            'Price',
-            '\$ $price',
-            isTotal: true,
+            alignment: Alignment.centerRight,
+            child: _buildBadge("Refundable"),
           ),
+          const Divider(height: 16),
+          _buildPriceRow('Price', 'PKR $price', isTotal: true),
         ],
       ),
     );
@@ -241,7 +227,7 @@ class _ImportantBookingDetailsCardState
           style: TextStyle(
             fontSize: isTotal ? 16 : 14,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-            color: isTotal ? const Color(0xFFFFAB00) : Colors.grey[800],
+            color: isTotal ? TColors.primary : Colors.grey[800],
           ),
         ),
         Text(
@@ -249,7 +235,7 @@ class _ImportantBookingDetailsCardState
           style: TextStyle(
             fontSize: isTotal ? 16 : 14,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-            color: isTotal ? const Color(0xFFFFAB00) : Colors.grey[800],
+            color: isTotal ? TColors.primary : Colors.grey[800],
           ),
         ),
       ],

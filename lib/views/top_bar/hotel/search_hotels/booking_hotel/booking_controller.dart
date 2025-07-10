@@ -1,4 +1,5 @@
-
+import 'package:agent1/services/api_service_hotel.dart';
+import 'package:agent1/views/authentication/cotnroller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -13,9 +14,9 @@ class HotelGuestInfo {
   final TextEditingController lastNameController;
 
   HotelGuestInfo()
-      : titleController = TextEditingController(),
-        firstNameController = TextEditingController(),
-        lastNameController = TextEditingController();
+    : titleController = TextEditingController(),
+      firstNameController = TextEditingController(),
+      lastNameController = TextEditingController();
 
   void dispose() {
     titleController.dispose();
@@ -34,10 +35,7 @@ class RoomGuests {
   final List<HotelGuestInfo> adults;
   final List<HotelGuestInfo> children;
 
-  RoomGuests({
-    required this.adults,
-    required this.children,
-  });
+  RoomGuests({required this.adults, required this.children});
 
   void dispose() {
     for (var adult in adults) {
@@ -53,11 +51,12 @@ class BookingController extends GetxController {
   // Room guest information
   final RxList<RoomGuests> roomGuests = <RoomGuests>[].obs;
   SearchHotelController searchHotelController =
-  Get.find<SearchHotelController>();
+      Get.find<SearchHotelController>();
   HotelDateController hotelDateController = Get.find<HotelDateController>();
   GuestsController guestsController = Get.find<GuestsController>();
 
-  // ApiServiceHotel apiService = ApiServiceHotel();
+  ApiServiceHotel apiService = ApiServiceHotel();
+  var booking_num = 0.obs;
 
   // Booker Information
   final titleController = TextEditingController();
@@ -88,21 +87,35 @@ class BookingController extends GetxController {
     super.onInit();
     // Initialize with existing GuestsController data
     initializeRoomGuests();
+    // loadUserEmail();
   }
+
+  // New method to load user email from shared preferences
+  // Future<void> loadUserEmail() async {
+  //   try {
+  //     // Import the AuthController to access user data
+  //     final authController = Get.find<AuthController>();
+  //     final userData = await authController.getUserData();
+
+  //     if (userData != null && userData['cs_email'] != null) {
+  //       // Set the email controller with the user's email
+  //       emailController.text = userData['cs_email'];
+  //     }
+  //   } catch (e) {
+  //     print('Error loading user email: $e');
+  //   }
+  // }
 
   void initializeRoomGuests() {
     final guestsController = Get.find<GuestsController>();
 
     roomGuests.clear();
     for (var room in guestsController.rooms) {
-      final adults = List.generate(
-        room.adults.value,
-            (_) => HotelGuestInfo(),
-      );
+      final adults = List.generate(room.adults.value, (_) => HotelGuestInfo());
 
       final children = List.generate(
         room.children.value,
-            (_) => HotelGuestInfo(),
+        (_) => HotelGuestInfo(),
       );
 
       roomGuests.add(RoomGuests(adults: adults, children: children));
@@ -146,7 +159,6 @@ class BookingController extends GetxController {
         validateAllGuestInfo() &&
         acceptedTerms.value;
   }
-
 
   void resetForm() {
     // Reset booker information
@@ -194,19 +206,19 @@ class BookingController extends GetxController {
     super.onClose();
   }
 
-  Future<bool> saveHotelBookingToDB() async  {
+  Future<bool> saveHotelBookingToDB() async {
     final selectRoomController = Get.put(SelectRoomController());
     List<Map<String, dynamic>> roomsList = [];
     final dateFormat = DateFormat('yyyy-MM-dd');
 
     try {
-
       // Calculate total buying price from selected rooms
       double totalBuyingPrice = 0;
       for (var roomData in searchHotelController.selectedRoomsData) {
         if (roomData['price'] != null) {
           // Get price per night
-          double pricePerNight = double.tryParse(roomData['price']['net'].toString()) ?? 0;
+          double pricePerNight =
+              double.tryParse(roomData['price']['net'].toString()) ?? 0;
           // Multiply by number of nights
           totalBuyingPrice += pricePerNight * hotelDateController.nights.value;
         }
@@ -228,7 +240,7 @@ class BookingController extends GetxController {
             "title": adult.titleController.text.trim(),
             "first": adult.firstNameController.text.trim(),
             "last": adult.lastNameController.text.trim(),
-            "age": ""
+            "age": "",
           });
         }
 
@@ -236,10 +248,11 @@ class BookingController extends GetxController {
         if (roomGuests[i].children.isNotEmpty) {
           for (var j = 0; j < roomGuests[i].children.length; j++) {
             var child = roomGuests[i].children[j];
-            var childAge = guestsController.rooms[i].childrenAges.isNotEmpty &&
-                j < guestsController.rooms[i].childrenAges.length
-                ? guestsController.rooms[i].childrenAges[j].toString()
-                : "0";
+            var childAge =
+                guestsController.rooms[i].childrenAges.isNotEmpty &&
+                        j < guestsController.rooms[i].childrenAges.length
+                    ? guestsController.rooms[i].childrenAges[j].toString()
+                    : "0";
 
             if (child.titleController.text.isEmpty ||
                 child.firstNameController.text.isEmpty ||
@@ -252,11 +265,14 @@ class BookingController extends GetxController {
               "title": child.titleController.text.trim(),
               "first": child.firstNameController.text.trim(),
               "last": child.lastNameController.text.trim(),
-              "age": childAge
+              "age": childAge,
             });
           }
         }
 
+        // Get the policy details for the room
+        // Get the policy details for the room
+        // Get the policy details for the room
         // Get the policy details for the room
         final policyDetails = selectRoomController.getPolicyDetailsForRoom(i);
         String pEndDate = "";
@@ -264,10 +280,35 @@ class BookingController extends GetxController {
 
         if (policyDetails.isNotEmpty) {
           final firstPolicy = policyDetails.first;
-          pEndDate = firstPolicy['from_date']?.split('T')?.first ?? "";
-          pEndTime = firstPolicy['from_time'] ?? "";
-        }
 
+          // Try all possible key formats to be safe
+          // First try snake_case keys from the request body example
+          if (firstPolicy['to_date'] != null &&
+              firstPolicy['to_date'].isNotEmpty) {
+            List<String> dateParts = firstPolicy['to_date'].split('T');
+            if (dateParts.isNotEmpty) {
+              pEndDate = dateParts[0];
+            }
+          }
+          // Then try camelCase keys that might be coming from the API
+          else if (firstPolicy['toDate'] != null &&
+              firstPolicy['toDate'].isNotEmpty) {
+            List<String> dateParts = firstPolicy['toDate'].split('T');
+            if (dateParts.isNotEmpty) {
+              pEndDate = dateParts[0];
+            }
+          }
+
+          // Same approach for time
+          if (firstPolicy['to_time'] != null) {
+            pEndTime = firstPolicy['to_time'];
+          } else if (firstPolicy['toTime'] != null) {
+            pEndTime = firstPolicy['toTime'];
+          }
+
+          // Print a debug message
+          print("Policy data extracted - Date: $pEndDate, Time: $pEndTime");
+        }
         // Create room object with null safety
         Map<String, dynamic> roomObject = {
           "p_nature": selectRoomController.getRateType(i),
@@ -277,7 +318,7 @@ class BookingController extends GetxController {
           "room_name": selectRoomController.getRoomName(i),
           "room_bordbase": selectRoomController.getRoomMeal(i),
           "policy_details": policyDetails,
-          "pax_details": paxDetails
+          "pax_details": paxDetails,
         };
 
         roomsList.add(roomObject);
@@ -305,9 +346,10 @@ class BookingController extends GetxController {
         "om_ordate": DateTime.now().toIso8601String().split('T')[0].toString(),
         "cancellation_buffer": "",
         "session_id": searchHotelController.sessionId.value,
-        "group_code": searchHotelController.roomsdata.isNotEmpty
-            ? searchHotelController.roomsdata[0]['groupCode'] ?? ""
-            : "",
+        "group_code":
+            searchHotelController.roomsdata.isNotEmpty
+                ? searchHotelController.roomsdata[0]['groupCode'] ?? ""
+                : "",
         "rate_key": _buildRateKey(),
         "om_hid": searchHotelController.hotelCode.value,
         "om_nights": hotelDateController.nights.value,
@@ -317,36 +359,38 @@ class BookingController extends GetxController {
         "om_destination": searchHotelController.hotelCity.value,
         "om_trooms": guestsController.roomCount.value,
         "om_chindate": dateFormat.format(hotelDateController.checkInDate.value),
-        "om_choutdate": dateFormat.format(hotelDateController.checkOutDate.value),
+        "om_choutdate": dateFormat.format(
+          hotelDateController.checkOutDate.value,
+        ),
         "om_spreq": specialRequests.isEmpty ? "" : specialRequests.join(', '),
         "om_smoking": "",
         "om_status": "0",
         "payment_status": "Pending",
         "om_suppliername": "Arabian",
-        "Rooms": roomsList
+        "Rooms": roomsList,
       };
 
       isLoading.value = true;
       // Send the booking request
-      // final bool success = addressControllerwait; apiService.bookHotel(requestBody);
-      //
+      final bool success = await apiService.bookHotel(requestBody);
+
       isLoading.value = false;
-      // return success;
-      return true;
+      return success;
     } catch (e) {
       rethrow;
     }
   }
 
-// Helper method to build rate key
+  // Helper method to build rate key
   String _buildRateKey() {
     try {
       if (searchHotelController.selectedRoomsData.isEmpty) return "";
 
-      List<String> rateKeys = searchHotelController.selectedRoomsData
-          .map((room) => room['rateKey']?.toString() ?? "")
-          .where((key) => key.isNotEmpty)
-          .toList();
+      List<String> rateKeys =
+          searchHotelController.selectedRoomsData
+              .map((room) => room['rateKey']?.toString() ?? "")
+              .where((key) => key.isNotEmpty)
+              .toList();
 
       return rateKeys.isEmpty ? "" : "start${rateKeys.join('za,in')}";
     } catch (e) {
@@ -355,6 +399,5 @@ class BookingController extends GetxController {
     }
   }
 
-
-// Rest of your code remains the same...
+  // Rest of your code remains the same...
 }
