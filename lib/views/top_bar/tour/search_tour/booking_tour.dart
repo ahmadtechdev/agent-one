@@ -1,4 +1,3 @@
-
 import 'package:agent1/common/color_extension.dart';
 import 'package:agent1/common_widget/date_selection.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ class BookingTour extends StatelessWidget {
   final RxInt adultCount = 0.obs;
   final RxInt childCount = 0.obs;
 
-   BookingTour({super.key});
+  BookingTour({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +51,8 @@ class BookingTour extends StatelessWidget {
                     bottom: 10,
                     left: 10,
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       color: Colors.black54,
                       child: const Text(
                         'Southern Tales: Full-day Tour',
@@ -102,7 +101,7 @@ class BookingTour extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:  BorderSide(color: TColors.primary),
+                            borderSide: BorderSide(color: TColors.primary),
                           ),
                         ),
                         items: const [
@@ -147,7 +146,7 @@ class BookingTour extends StatelessWidget {
                       DropdownButtonFormField<int>(
                         value: adultCount.value,
                         decoration: InputDecoration(
-                          prefixIcon:  Icon(
+                          prefixIcon: Icon(
                             Icons.person,
                             color: TColors.primary,
                           ),
@@ -156,7 +155,7 @@ class BookingTour extends StatelessWidget {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:  BorderSide(color: TColors.primary),
+                            borderSide: BorderSide(color: TColors.primary),
                           ),
                         ),
                         items: List.generate(
@@ -181,7 +180,7 @@ class BookingTour extends StatelessWidget {
                       DropdownButtonFormField<int>(
                         value: childCount.value,
                         decoration: InputDecoration(
-                          prefixIcon:  Icon(
+                          prefixIcon: Icon(
                             Icons.child_care,
                             color: TColors.primary,
                           ),
@@ -190,7 +189,7 @@ class BookingTour extends StatelessWidget {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:  BorderSide(color: TColors.primary),
+                            borderSide: BorderSide(color: TColors.primary),
                           ),
                         ),
                         items: List.generate(
@@ -216,7 +215,7 @@ class BookingTour extends StatelessWidget {
                             children: [
                               RadioListTile(
                                 activeColor: TColors.primary,
-                                title:  Row(
+                                title: Row(
                                   children: [
                                     Icon(Icons.car_rental,
                                         color: TColors.primary),
@@ -235,7 +234,7 @@ class BookingTour extends StatelessWidget {
                               ),
                               RadioListTile(
                                 activeColor: TColors.primary,
-                                title:  Row(
+                                title: Row(
                                   children: [
                                     Icon(Icons.car_rental,
                                         color: TColors.primary),
@@ -254,7 +253,7 @@ class BookingTour extends StatelessWidget {
                               ),
                               RadioListTile(
                                 activeColor: TColors.primary,
-                                title:  Row(
+                                title: Row(
                                   children: [
                                     Icon(Icons.directions_bus,
                                         color: TColors.primary),
@@ -285,20 +284,20 @@ class BookingTour extends StatelessWidget {
                           children: [
                             Text(
                               'Total Adult Price: ${adultCount.value} x PKR $adultPrice = PKR ${adultCount.value * adultPrice}',
-                              style:
-                                  const TextStyle(fontSize: 16, color: TColors.text),
+                              style: const TextStyle(
+                                  fontSize: 16, color: TColors.text),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               'Total Child Price: ${childCount.value} x PKR $childPrice = PKR ${childCount.value * childPrice}',
-                              style:
-                                  const TextStyle(fontSize: 16, color: TColors.text),
+                              style: const TextStyle(
+                                  fontSize: 16, color: TColors.text),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               'Private Transfer: PKR ${controller.carPrice.value}',
-                              style:
-                                  const TextStyle(fontSize: 16, color: TColors.text),
+                              style: const TextStyle(
+                                  fontSize: 16, color: TColors.text),
                             ),
                             const SizedBox(height: 10),
                             Text(

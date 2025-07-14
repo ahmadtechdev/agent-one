@@ -1,12 +1,16 @@
-import 'package:agent1/common/color_extension.dart';
-import 'package:agent1/views/top_bar/group_ticket/flight_pkg/select_pkg.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/api_service_group_tickets.dart';
+import 'package:agent1/views/top_bar/group_ticket/flight_pkg/select_pkg.dart';
 
-class GroupTicket extends StatelessWidget {
+class GroupTicket extends StatefulWidget {
   const GroupTicket({super.key});
 
+  @override
+  State<GroupTicket> createState() => _GroupTicketState();
+}
+
+class _GroupTicketState extends State<GroupTicket> {
   @override
   Widget build(BuildContext context) {
     // Create the controller once and reuse it
@@ -18,278 +22,221 @@ class GroupTicket extends StatelessWidget {
     return Column(
       children: [
         SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/sky.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      alignment: const Alignment(-1, 0),
-                      child: const Icon(Icons.arrow_back, color: Colors.white),
-                    ),
-                  ),
-                  // Header
-                  const Text(
-                    'Airline Groups',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10.0,
-                          color: Colors.black38,
-                          offset: Offset(2.0, 2.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Subheader
-                  const Text(
-                    'Groups you need...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 5.0,
-                          color: Colors.black38,
-                          offset: Offset(1.0, 1.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // First row of cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/1.png',
-                            title: 'UAE One Way Groups',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              // await controller.fetchGroups('UAE');
-                              await controller.fetchCombinedGroups(
-                                'UAE',
-                                'UAE     ',
-                              );
-
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "UAE One Way Groups data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/2.png',
-                            title: 'KSA One Way Groups',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              await controller.fetchCombinedGroups(
-                                'KSA',
-                                'KSA ONEWAY',
-                              );
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "KSA One Way Groups data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Second row of cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/4.png',
-                            title: 'OMAN One Way Groups',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              // await controller.fetchGroups('OMAN');
-                              await controller.fetchCombinedGroups(
-                                'OMAN',
-                                ' OMANN    ',
-                              );
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "OMAN One Way Groups data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/4.png',
-                            title: 'UK One Way Groups',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              // await controller.fetchGroups('UK');
-                              await controller.fetchCombinedGroups('UK', 'UK ');
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "UK One Way Groups data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Third row of cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/5.png',
-                            title: 'UMRAH',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              // await controller.fetchGroups('UMRAH');
-                              await controller.fetchCombinedGroups(
-                                'UMRAH',
-                                'UMRAH',
-                              );
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "UMRAH data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: DestinationCard(
-                            image: 'assets/images/6.png',
-                            title: 'All Types',
-                            onTap: () async {
-                              // Await the fetch to complete before navigating
-                              await controller.fetchCombinedGroups(
-                                '     ',
-                                '     ',
-                              );
-                              Get.to(() => SelectPkgScreen());
-                              Get.snackbar(
-                                "Loading",
-                                "All Types data loaded",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// DestinationCard class remains the same
-class DestinationCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final VoidCallback onTap;
-
-  // ignore: use_super_parameters
-  const DestinationCard({
-    Key? key,
-    required this.image,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: TColors.secondary, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Stack(
+          child: Column(
             children: [
-              Positioned.fill(child: Image.asset(image, fit: BoxFit.cover)),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      top: BorderSide(color: TColors.secondary, width: 1),
+              // First Container - One Way Group Tickets
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 8),
                     ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () async {
+                    await controller.fetchCombinedGroups(
+                      'UAE',
+                      'UAE     ',
+                    );
+                    Get.to(() => SelectPkgScreen());
+                    Get.snackbar(
+                      "Loading",
+                      "UAE One Way Groups data loaded",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 270,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          image: DecorationImage(
+                            image: AssetImage('assets/img/g_ticket/1.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Align(
+                        child: Text(
+                          'One Way Group Tickets',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                          'Explore available one-way group ticket options for your travels.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                ),
+              ),
+
+              // Second Container - Umrah Group Tickets
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 8),
                     ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () async {
+                    await controller.fetchCombinedGroups(
+                      'UMRAH',
+                      'UMRAH',
+                    );
+                    Get.to(() => SelectPkgScreen());
+                    Get.snackbar(
+                      "Loading",
+                      "UMRAH data loaded",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 270,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          image: DecorationImage(
+                            image: AssetImage('assets/img/g_ticket/2.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Align(
+                        child: Text(
+                          'Umrah Group Tickets',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                          'Book group tickets for your Umrah trip with ease and convenience.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Third Container - All Group Tickets
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () async {
+                    await controller.fetchCombinedGroups(
+                      '     ',
+                      '     ',
+                    );
+                    Get.to(() => SelectPkgScreen());
+                    Get.snackbar(
+                      "Loading",
+                      "All Types data loaded",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 270,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                          image: DecorationImage(
+                            image: AssetImage('assets/img/g_ticket/3.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Align(
+                        child: Text(
+                          'All Group Tickets',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                          'Browse and book tickets for all group options available at the best rates.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

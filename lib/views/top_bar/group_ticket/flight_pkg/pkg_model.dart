@@ -62,6 +62,9 @@ class GroupFlightModel {
 
     if (value is String) {
       try {
+
+
+
         return int.parse(value);
       } catch (e) {
         // If parsing fails, return the default value
@@ -128,7 +131,7 @@ class GroupFlightModel {
       flightNumber: details['flight_no']?.toString() ?? '',
       price: json['price'] ?? 0,
       seats: json['available_no_of_pax'] ?? 0,
-      hasLayover: false, // Default value
+      hasLayover: false, // Default value1
       baggage: (details['baggage'] ?? json['baggage'] ?? 'N/A').toString(),
       logoUrl:
           airline['logo_url']?.toString() ??
