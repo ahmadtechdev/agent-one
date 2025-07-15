@@ -6,7 +6,6 @@ import 'package:agent1/views/top_bar/hotel/hotel/hotel_date_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class BookingCard extends GetView<BookingController> {
   final int index;
@@ -48,7 +47,6 @@ class BookingCard extends GetView<BookingController> {
                   ),
               ],
             ),
-
 
             const SizedBox(height: 16),
 
@@ -151,70 +149,6 @@ class BookingCard extends GetView<BookingController> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDateField(
-    String label,
-    DateTime? initialDate,
-    Function(DateTime) onDateSelected, {
-    DateTime? firstDate,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: TColors.primaryText,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () async {
-            final date = await showDatePicker(
-              context: Get.context!,
-              initialDate: initialDate ?? DateTime.now(),
-              firstDate: firstDate ?? DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
-            );
-            if (date != null) {
-              onDateSelected(date);
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: TColors.textField,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: TColors.primary.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.calendar_today, color: TColors.primary, size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    initialDate != null
-                        ? DateFormat('dd/MM/yyyy').format(initialDate)
-                        : 'dd/mm/yyyy',
-                    style: TextStyle(
-                      color: initialDate != null
-                          ? TColors.primaryText
-                          : TColors.primaryText.withOpacity(0.6),
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
