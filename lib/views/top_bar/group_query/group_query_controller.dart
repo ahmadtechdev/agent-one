@@ -1,11 +1,24 @@
 import 'package:agent1/views/top_bar/group_query/model/model.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class BookingController extends GetxController {
   RxList<BookingModel> bookings = <BookingModel>[].obs;
   RxBool isAddButtonVisible = true.obs;
   RxDouble totalReceipt = 0.0.obs;
   RxDouble totalPayment = 0.0.obs;
+  
+  // Global requirements (shared across all bookings)
+  RxMap<String, bool> globalRequirements = <String, bool>{
+    'Airport Transfer': false,
+    'Tour Guide': false,
+    'Breakfast': false,
+    'Half Board Meals': false,
+    'Full Board Meals': false,
+    'Conference': false,
+    'Meeting': false,
+    'Events': false,
+  }.obs;
   
   @override
   void onInit() {
@@ -31,43 +44,63 @@ class BookingController extends GetxController {
   }
 
   void updateDestination(int index, String value) {
-    bookings[index].destination = value;
-    update();
+    if (index < bookings.length) {
+      bookings[index].destination = value;
+      bookings.refresh();
+    }
+  }
+
+  void updateNumberOfPeople(int index, int value) {
+    if (index < bookings.length && value > 0) {
+      bookings[index].numberOfPeople = value;
+      bookings.refresh();
+    }
   }
 
   void updateCheckIn(int index, DateTime date) {
-    bookings[index].checkIn = date;
-    _calculateDays(index);
-    update();
+    if (index < bookings.length) {
+      bookings[index].checkIn = date;
+      // Ensure check-out is after check-in
+      if (bookings[index].checkOut != null && 
+          bookings[index].checkOut!.isBefore(date)) {
+        bookings[index].checkOut = null;
+      }
+      bookings[index].calculateDays();
+      bookings.refresh();
+    }
   }
 
   void updateCheckOut(int index, DateTime date) {
-    bookings[index].checkOut = date;
-    _calculateDays(index);
-    update();
-  }
-
-  void _calculateDays(int index) {
-    if (bookings[index].checkIn != null && bookings[index].checkOut != null) {
-      final difference = bookings[index].checkOut!.difference(bookings[index].checkIn!);
-      bookings[index].numberOfDays = difference.inDays.toString();
-      update();
+    if (index < bookings.length) {
+      final checkIn = bookings[index].checkIn;
+      if (checkIn != null && date.isAfter(checkIn)) {
+        bookings[index].checkOut = date;
+        bookings[index].calculateDays();
+        bookings.refresh();
+      } else {
+        _showError('Check-out date must be after check-in date');
+      }
     }
   }
 
   void updateRoomType(int index, String type) {
-    bookings[index].selectedRoomType = type;
-    update();
+    if (index < bookings.length) {
+      bookings[index].selectedRoomType = type;
+      bookings.refresh();
+    }
   }
 
   void updateStarRating(int index, int rating) {
-    bookings[index].starRating = rating;
-    update();
+    if (index < bookings.length && rating >= 1 && rating <= 5) {
+      bookings[index].starRating = rating;
+      bookings.refresh();
+    }
   }
 
-  void updateRequirement(int index, String requirement, bool value) {
-    bookings[index].requirements[requirement] = value;
-    update();
+  void updateRequirement(String requirement, bool value) {
+    if (globalRequirements.containsKey(requirement)) {
+      globalRequirements[requirement] = value;
+    }
   }
 
   double getClosingBalance() {
@@ -75,20 +108,82 @@ class BookingController extends GetxController {
   }
 
   bool validateForm() {
-    for (var booking in bookings) {
-      if (booking.destination == null || booking.destination!.isEmpty) {
-        Get.snackbar('Error', 'Please enter destination');
+    for (int i = 0; i < bookings.length; i++) {
+      final booking = bookings[i];
+      
+      if (booking.destination.isEmpty) {
+        _showError('Please enter destination for booking ${i + 1}');
         return false;
       }
-      if (booking.checkIn == null || booking.checkOut == null) {
-        Get.snackbar('Error', 'Please select dates');
+      
+      if (booking.checkIn == null) {
+        _showError('Please select check-in date for booking ${i + 1}');
         return false;
       }
+      
+      if (booking.checkOut == null) {
+        _showError('Please select check-out date for booking ${i + 1}');
+        return false;
+      }
+      
+      if (booking.checkOut!.isBefore(booking.checkIn!)) {
+        _showError('Check-out date must be after check-in date for booking ${i + 1}');
+        return false;
+      }
+      
       if (booking.selectedRoomType.isEmpty) {
-        Get.snackbar('Error', 'Please select room type');
+        _showError('Please select room type for booking ${i + 1}');
+        return false;
+      }
+      
+      if (booking.numberOfPeople <= 0) {
+        _showError('Number of people must be greater than 0 for booking ${i + 1}');
         return false;
       }
     }
     return true;
+  }
+
+  void _showError(String message) {
+    Get.snackbar(
+      'Validation Error',
+      message,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  void _showSuccess(String message) {
+    Get.snackbar(
+      'Success',
+      message,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  void submitBooking() {
+    if (validateForm()) {
+      // Process booking submission
+      final bookingData = {
+        'bookings': bookings.map((b) => b.toJson()).toList(),
+        'requirements': globalRequirements,
+      };
+      print('Booking submitted: $bookingData');
+      _showSuccess('Booking submitted successfully!');
+      
+      // Here you would typically send the data to your API
+      // await apiService.submitBooking(bookingData);
+    }
+  }
+
+  void resetBookings() {
+    bookings.clear();
+    addBooking();
+    isAddButtonVisible.value = true;
+    // Reset global requirements
+    globalRequirements.updateAll((key, value) => false);
   }
 }

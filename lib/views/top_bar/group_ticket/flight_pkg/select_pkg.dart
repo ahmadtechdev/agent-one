@@ -26,7 +26,9 @@ class SelectPkgScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.print),
-            onPressed: () {},
+            onPressed: () {
+              
+            },
           ),
         ],
       ),
@@ -733,7 +735,9 @@ class SelectPkgScreen extends StatelessWidget {
                 ),
                 TextSpan(
                   text: '${flight.price}',
-                  style:  TextStyle(
+                  style: 
+                  
+                   TextStyle(
                     fontSize: 20,
                     color: TColors.primary,
                     fontWeight: FontWeight.bold,

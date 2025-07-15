@@ -1,7 +1,10 @@
 import 'package:agent1/common/color_extension.dart';
+import 'package:agent1/common_widget/date_range_slector.dart';
 import 'package:agent1/views/top_bar/group_query/group_query_controller.dart';
 import 'package:agent1/views/top_bar/group_query/model/model.dart';
+import 'package:agent1/views/top_bar/hotel/hotel/hotel_date_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -17,17 +20,18 @@ class BookingCard extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
+    return Container(
+      color: TColors.white,
+      // elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header with destination number and remove button
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Destination ${index + 1}',
@@ -44,8 +48,10 @@ class BookingCard extends GetView<BookingController> {
                   ),
               ],
             ),
+
+
             const SizedBox(height: 16),
-            
+
             // Destination TextField
             TextFormField(
               initialValue: booking.destination,
@@ -60,166 +66,155 @@ class BookingCard extends GetView<BookingController> {
               ),
               onChanged: (value) => controller.updateDestination(index, value),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Date Selection Row
-            Row(
-              children: [
-                Expanded(child: _buildDateField(
-                  'Check-in',
-                  booking.checkIn,
-                  (date) => controller.updateCheckIn(index, date),
-                )),
-                const SizedBox(width: 16),
-                Expanded(child: _buildDateField(
-                  'Check-out',
-                  booking.checkOut,
-                  (date) => controller.updateCheckOut(index, date),
-                )),
-              ],
-            ),
-            
+            Obx(() {
+              final hotelDateController = Get.put(HotelDateController());
+              return CustomDateRangeSelector(
+                dateRange: hotelDateController.dateRange.value,
+                onDateRangeChanged: hotelDateController.updateDateRange,
+                nights: hotelDateController.nights.value,
+                onNightsChanged: hotelDateController.updateNights,
+              );
+            }),
             const SizedBox(height: 16),
-            
-            // Room Types
+
+            // Room Types (Radio Buttons)
             Text(
-              'Room Type',
+              'Select Room Type:',
               style: TextStyle(
                 color: TColors.primaryText,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            Column(
               children: [
                 'Single',
                 'Double',
                 'Triple',
                 'Quad',
                 'Quint',
-              ].map((type) => ChoiceChip(
-                label: Text(type),
-                selected: booking.selectedRoomType == type,
-                onSelected: (selected) {
-                  if (selected) controller.updateRoomType(index, type);
-                },
-                selectedColor: TColors.primary,
-                labelStyle: TextStyle(
-                  color: booking.selectedRoomType == type
-                      ? TColors.white
-                      : TColors.primaryText,
-                ),
-              )).toList(),
+              ]
+                  .map((type) => RadioListTile<String>(
+                        title: Text(type),
+                        value: type,
+                        groupValue: booking.selectedRoomType,
+                        onChanged: (value) {
+                          if (value != null)
+                            controller.updateRoomType(index, value);
+                        },
+                        activeColor: TColors.primary,
+                        dense: true,
+                      ))
+                  .toList(),
             ),
-            
+
             const SizedBox(height: 16),
-            
-            // Star Rating
+
+            // Star Rating (Radio Buttons)
             Text(
-              'Hotel Star Rating',
+              'Choose Hotel Star:',
               style: TextStyle(
                 color: TColors.primaryText,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: List.generate(5, (starIndex) => IconButton(
-                icon: Icon(
-                  starIndex < booking.starRating 
-                      ? Icons.star 
-                      : Icons.star_border,
-                  color: TColors.secondary,
-                ),
-                onPressed: () => controller.updateStarRating(index, starIndex + 1),
-              )),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Requirements
-            Text(
-              'Requirements',
-              style: TextStyle(
-                color: TColors.primaryText,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: booking.requirements.entries.map((entry) => FilterChip(
-                label: Text(entry.key),
-                selected: entry.value,
-                onSelected: (selected) => 
-                    controller.updateRequirement(index, entry.key, selected),
-                selectedColor: TColors.primary,
-                labelStyle: TextStyle(
-                  color: entry.value ? TColors.white : TColors.primaryText,
-                ),
-              )).toList(),
+            Column(
+              children: List.generate(5, (starIndex) {
+                final stars = starIndex + 1;
+                return RadioListTile<int>(
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(
+                        stars,
+                        (index) => Icon(
+                              Icons.star,
+                              color: TColors.secondary,
+                              size: 20,
+                            )),
+                  ),
+                  value: stars,
+                  groupValue: booking.starRating,
+                  onChanged: (value) {
+                    if (value != null)
+                      controller.updateStarRating(index, value);
+                  },
+                  activeColor: TColors.primary,
+                  dense: true,
+                );
+              }),
             ),
           ],
         ),
       ),
     );
-  }Widget _buildDateField(
-  String label,
-  DateTime? initialDate,
-  Function(DateTime) onDateSelected,
-) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: TextStyle(
-          color: TColors.primaryText,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 8),
-      InkWell(
-        onTap: () async {
-          final date = await showDatePicker(
-            context: Get.context!,
-            initialDate: initialDate ?? DateTime.now(),
-            firstDate: DateTime.now(),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-          );
-          if (date != null) {
-            onDateSelected(date);
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: TColors.textField,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.calendar_today, color: TColors.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                initialDate != null
-                    ? DateFormat('yyyy-MM-dd').format(initialDate)
-                    : 'Select a date',
-                style: TextStyle(
-                  color: TColors.primaryText,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
   }
+
+  Widget _buildDateField(
+    String label,
+    DateTime? initialDate,
+    Function(DateTime) onDateSelected, {
+    DateTime? firstDate,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: TColors.primaryText,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            final date = await showDatePicker(
+              context: Get.context!,
+              initialDate: initialDate ?? DateTime.now(),
+              firstDate: firstDate ?? DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (date != null) {
+              onDateSelected(date);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: TColors.textField,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: TColors.primary.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today, color: TColors.primary, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    initialDate != null
+                        ? DateFormat('dd/MM/yyyy').format(initialDate)
+                        : 'dd/mm/yyyy',
+                    style: TextStyle(
+                      color: initialDate != null
+                          ? TColors.primaryText
+                          : TColors.primaryText.withOpacity(0.6),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
