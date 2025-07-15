@@ -7,7 +7,7 @@ class BookingController extends GetxController {
   RxBool isAddButtonVisible = true.obs;
   RxDouble totalReceipt = 0.0.obs;
   RxDouble totalPayment = 0.0.obs;
-  
+
   // Global requirements (shared across all bookings)
   RxMap<String, bool> globalRequirements = <String, bool>{
     'Airport Transfer': false,
@@ -19,7 +19,7 @@ class BookingController extends GetxController {
     'Meeting': false,
     'Events': false,
   }.obs;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -61,7 +61,7 @@ class BookingController extends GetxController {
     if (index < bookings.length) {
       bookings[index].checkIn = date;
       // Ensure check-out is after check-in
-      if (bookings[index].checkOut != null && 
+      if (bookings[index].checkOut != null &&
           bookings[index].checkOut!.isBefore(date)) {
         bookings[index].checkOut = null;
       }
@@ -110,34 +110,20 @@ class BookingController extends GetxController {
   bool validateForm() {
     for (int i = 0; i < bookings.length; i++) {
       final booking = bookings[i];
-      
+
       if (booking.destination.isEmpty) {
         _showError('Please enter destination for booking ${i + 1}');
         return false;
       }
-      
-      if (booking.checkIn == null) {
-        _showError('Please select check-in date for booking ${i + 1}');
-        return false;
-      }
-      
-      if (booking.checkOut == null) {
-        _showError('Please select check-out date for booking ${i + 1}');
-        return false;
-      }
-      
-      if (booking.checkOut!.isBefore(booking.checkIn!)) {
-        _showError('Check-out date must be after check-in date for booking ${i + 1}');
-        return false;
-      }
-      
+
       if (booking.selectedRoomType.isEmpty) {
         _showError('Please select room type for booking ${i + 1}');
         return false;
       }
-      
+
       if (booking.numberOfPeople <= 0) {
-        _showError('Number of people must be greater than 0 for booking ${i + 1}');
+        _showError(
+            'Number of people must be greater than 0 for booking ${i + 1}');
         return false;
       }
     }
@@ -173,7 +159,7 @@ class BookingController extends GetxController {
       };
       print('Booking submitted: $bookingData');
       _showSuccess('Booking submitted successfully!');
-      
+
       // Here you would typically send the data to your API
       // await apiService.submitBooking(bookingData);
     }
