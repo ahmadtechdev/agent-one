@@ -7,6 +7,7 @@ class BookingController extends GetxController {
   RxBool isAddButtonVisible = true.obs;
   RxDouble totalReceipt = 0.0.obs;
   RxDouble totalPayment = 0.0.obs;
+  var msg_controller = TextEditingController();
 
   // Global requirements (shared across all bookings)
   RxMap<String, bool> globalRequirements = <String, bool>{
@@ -83,18 +84,50 @@ class BookingController extends GetxController {
     }
   }
 
-  void updateRoomType(int index, String type) {
+  // Updated method to handle multiple room type selections
+  void updateRoomType(int index, String type, bool isSelected) {
     if (index < bookings.length) {
-      bookings[index].selectedRoomType = type;
+      final booking = bookings[index];
+      if (isSelected) {
+        if (!booking.selectedRoomTypes.contains(type)) {
+          booking.selectedRoomTypes.add(type);
+        }
+      } else {
+        booking.selectedRoomTypes.remove(type);
+      }
       bookings.refresh();
     }
   }
 
-  void updateStarRating(int index, int rating) {
+  // Updated method to handle multiple star rating selections
+  void updateStarRating(int index, int rating, bool isSelected) {
     if (index < bookings.length && rating >= 1 && rating <= 5) {
-      bookings[index].starRating = rating;
+      final booking = bookings[index];
+      if (isSelected) {
+        if (!booking.selectedStarRatings.contains(rating)) {
+          booking.selectedStarRatings.add(rating);
+        }
+      } else {
+        booking.selectedStarRatings.remove(rating);
+      }
       bookings.refresh();
     }
+  }
+
+  // Helper method to check if room type is selected
+  bool isRoomTypeSelected(int index, String type) {
+    if (index < bookings.length) {
+      return bookings[index].selectedRoomTypes.contains(type);
+    }
+    return false;
+  }
+
+  // Helper method to check if star rating is selected
+  bool isStarRatingSelected(int index, int rating) {
+    if (index < bookings.length) {
+      return bookings[index].selectedStarRatings.contains(rating);
+    }
+    return false;
   }
 
   void updateRequirement(String requirement, bool value) {
@@ -116,8 +149,13 @@ class BookingController extends GetxController {
         return false;
       }
 
-      if (booking.selectedRoomType.isEmpty) {
-        _showError('Please select room type for booking ${i + 1}');
+      if (booking.selectedRoomTypes.isEmpty) {
+        _showError('Please select at least one room type for booking ${i + 1}');
+        return false;
+      }
+
+      if (booking.selectedStarRatings.isEmpty) {
+        _showError('Please select at least one star rating for booking ${i + 1}');
         return false;
       }
 
@@ -169,6 +207,7 @@ class BookingController extends GetxController {
     bookings.clear();
     addBooking();
     isAddButtonVisible.value = true;
+    msg_controller.clear();
     // Reset global requirements
     globalRequirements.updateAll((key, value) => false);
   }

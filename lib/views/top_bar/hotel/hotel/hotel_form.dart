@@ -335,6 +335,7 @@ class HotelForm extends StatelessWidget {
   Widget _buildSearchButton(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
+      
       decoration: BoxDecoration(
         gradient:  LinearGradient(
           colors: [TColors.primary, TColors.secondary],

@@ -207,6 +207,7 @@ class GroupQuery extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              controller: controller.msg_controller,
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Enter any additional requirements or messages...',

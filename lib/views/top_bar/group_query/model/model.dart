@@ -3,9 +3,11 @@ class BookingModel {
   DateTime? checkIn;
   DateTime? checkOut;
   int numberOfDays = 0;
-  int numberOfPeople = 1; // Added missing field
-  String selectedRoomType = '';
-  int starRating = 0;
+  int numberOfPeople = 1;
+  
+  // Changed to support multiple selections
+  List<String> selectedRoomTypes = [];
+  List<int> selectedStarRatings = [];
 
   BookingModel();
 
@@ -22,7 +24,8 @@ class BookingModel {
     return destination.isNotEmpty &&
         checkIn != null &&
         checkOut != null &&
-        selectedRoomType.isNotEmpty &&
+        selectedRoomTypes.isNotEmpty &&
+        selectedStarRatings.isNotEmpty &&
         numberOfPeople > 0;
   }
 
@@ -33,8 +36,8 @@ class BookingModel {
       'checkOut': checkOut?.toIso8601String(),
       'numberOfDays': numberOfDays,
       'numberOfPeople': numberOfPeople,
-      'roomType': selectedRoomType,
-      'starRating': starRating,
+      'roomTypes': selectedRoomTypes,
+      'starRatings': selectedStarRatings,
     };
   }
 
@@ -46,8 +49,8 @@ class BookingModel {
     booking.checkOut = json['checkOut'] != null ? DateTime.parse(json['checkOut']) : null;
     booking.numberOfDays = json['numberOfDays'] ?? 0;
     booking.numberOfPeople = json['numberOfPeople'] ?? 1;
-    booking.selectedRoomType = json['roomType'] ?? '';
-    booking.starRating = json['starRating'] ?? 0;
+    booking.selectedRoomTypes = List<String>.from(json['roomTypes'] ?? []);
+    booking.selectedStarRatings = List<int>.from(json['starRatings'] ?? []);
     return booking;
   }
 }
