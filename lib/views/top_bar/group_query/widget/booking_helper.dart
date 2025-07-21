@@ -47,7 +47,6 @@ class BookingCard extends GetView<BookingController> {
             ),
 
             const SizedBox(height: 16),
-
             // Destination TextField
             TextFormField(
               initialValue: booking.destination,
@@ -210,6 +209,9 @@ class BookingCard extends GetView<BookingController> {
               ),
             ],
           ],
+
+
+
         ),
       ),
     );

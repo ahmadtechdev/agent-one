@@ -9,6 +9,7 @@ import 'package:agent1/views/top_bar/hotel/hotel/hotel_form.dart';
 import 'package:agent1/views/top_bar/tour/search_tour/tour_form.dart';
 import 'package:agent1/views/top_bar/umrah/umrah.dart';
 import 'package:agent1/views/top_bar/umrah_pkg/umrah_pkg.dart';
+import 'package:agent1/views/top_bar/visa/visa_view.dart';
 import 'package:flutter/material.dart';
 
 class BookingCard extends StatefulWidget {
@@ -68,7 +69,7 @@ class _BookingCardState extends State<BookingCard> {
               if (selectedType == 'Flights') FlightBookingScreen(),
               if (selectedType == 'Umrah') Umrah(),
               if (selectedType == 'Hotels') HotelForm(),
-              if (selectedType == 'Visas') Container(),
+              if (selectedType == 'Visas') VisaListScreen(),
               if (selectedType == 'Tours') const ToursForm(),
               if (selectedType == 'Cars') const SearchCars(),
               if (selectedType == 'Circulars') Container(),

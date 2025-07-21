@@ -21,11 +21,9 @@ class GroupFlightModel {
   final String baggage;
   final String logoUrl;
 
-  GroupFlightModel( {
+  GroupFlightModel({
     required dynamic id,
     required dynamic group_id,
-
-    
     required this.airline,
     required this.sector,
     required this.shortName,
@@ -41,12 +39,12 @@ class GroupFlightModel {
     required this.hasLayover,
     required this.baggage,
     required this.logoUrl,
-  }) : // Safely convert dynamic types to the required int types with error handling
-       id = _parseIntSafely(id, 0),
-       group_id = _parseIntSafely(group_id, 0),
-       groupPriceDetailId = _parseIntSafely(groupPriceDetailId, 0),
-       price = _parseIntSafely(price, 0),
-       seats = _parseIntSafely(seats, 0);
+  })  : // Safely convert dynamic types to the required int types with error handling
+        id = _parseIntSafely(id, 0),
+        group_id = _parseIntSafely(group_id, 0),
+        groupPriceDetailId = _parseIntSafely(groupPriceDetailId, 0),
+        price = _parseIntSafely(price, 0),
+        seats = _parseIntSafely(seats, 0);
 
   // Helper method to get formatted date
   String get formattedDate {
@@ -62,9 +60,6 @@ class GroupFlightModel {
 
     if (value is String) {
       try {
-
-
-
         return int.parse(value);
       } catch (e) {
         // If parsing fails, return the default value
@@ -94,10 +89,9 @@ class GroupFlightModel {
     // Parse departure date safely
     DateTime departureDate;
     try {
-      departureDate =
-          json['dept_date'] != null
-              ? DateTime.parse(json['dept_date'].toString())
-              : DateTime.now();
+      departureDate = json['dept_date'] != null
+          ? DateTime.parse(json['dept_date'].toString())
+          : DateTime.now();
     } catch (e) {
       departureDate = DateTime.now();
     }
@@ -116,7 +110,6 @@ class GroupFlightModel {
     }
 
     return GroupFlightModel(
-
       id: json['id'] ?? 0,
       group_id: json['group_id'] ?? 0,
       airline: airline['airline_name']?.toString() ?? '',
@@ -133,8 +126,7 @@ class GroupFlightModel {
       seats: json['available_no_of_pax'] ?? 0,
       hasLayover: false, // Default value1
       baggage: (details['baggage'] ?? json['baggage'] ?? 'N/A').toString(),
-      logoUrl:
-          airline['logo_url']?.toString() ??
+      logoUrl: airline['logo_url']?.toString() ??
           'assets/images/default_airline.png',
     );
   }

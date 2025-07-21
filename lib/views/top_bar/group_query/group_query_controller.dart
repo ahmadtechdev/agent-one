@@ -40,6 +40,7 @@ class BookingController extends GetxController {
   void removeBooking(int index) {
     if (bookings.length > 1) {
       bookings.removeAt(index);
+
       isAddButtonVisible.value = true;
     }
   }
@@ -155,7 +156,8 @@ class BookingController extends GetxController {
       }
 
       if (booking.selectedStarRatings.isEmpty) {
-        _showError('Please select at least one star rating for booking ${i + 1}');
+        _showError(
+            'Please select at least one star rating for booking ${i + 1}');
         return false;
       }
 
