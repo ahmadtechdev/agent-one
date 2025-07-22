@@ -1,6 +1,7 @@
 import 'package:agent1/common/color_extension.dart';
 import 'package:agent1/views/booking_card/type_selector/type_selector.dart';
 import 'package:agent1/views/top_bar/cars/search_cars/search_cars.dart';
+import 'package:agent1/views/top_bar/circular/circular.dart';
 import 'package:agent1/views/top_bar/domastic_hotels/hotel/domastic_hotel_form.dart';
 import 'package:agent1/views/top_bar/flight/form/flight_form.dart';
 import 'package:agent1/views/top_bar/group_query/group_query.dart';
@@ -72,7 +73,7 @@ class _BookingCardState extends State<BookingCard> {
               if (selectedType == 'Visas') VisaListScreen(),
               if (selectedType == 'Tours') const ToursForm(),
               if (selectedType == 'Cars') const SearchCars(),
-              if (selectedType == 'Circulars') Container(),
+              if (selectedType == 'Circulars') AirlineCircularsScreen(),
               if (selectedType == 'Group Tickets') GroupTicket(),
               if (selectedType == 'Domestic Hotels') DomasticHotelForm(),
               if (selectedType == 'Umrah Package') UmrahPkg(),
