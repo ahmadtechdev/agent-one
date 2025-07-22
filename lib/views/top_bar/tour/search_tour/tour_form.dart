@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import 'booking_tour.dart';
 
-
 class Tour {
   final String name;
   final String description;
@@ -173,7 +172,7 @@ class _ToursFormState extends State<ToursForm> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search tours...',
-              prefixIcon:  Icon(Icons.search, color: TColors.primary),
+              prefixIcon: Icon(Icons.search, color: TColors.primary),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
@@ -185,7 +184,7 @@ class _ToursFormState extends State<ToursForm> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:  BorderSide(color: TColors.primary, width: 2),
+                borderSide: BorderSide(color: TColors.primary, width: 2),
               ),
             ),
           ),
@@ -352,7 +351,7 @@ class _ToursFormState extends State<ToursForm> {
                                       ),
                                       Text(
                                         'PKR ${tour.price.toStringAsFixed(0)}',
-                                        style:  TextStyle(
+                                        style: TextStyle(
                                           color: TColors.primary,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
