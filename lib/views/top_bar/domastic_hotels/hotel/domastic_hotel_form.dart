@@ -115,6 +115,7 @@ class DomasticHotelForm extends StatelessWidget {
                         const Text(
                           'Something went wrong',
                           style: TextStyle(
+
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
