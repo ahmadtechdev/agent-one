@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-
 class SelectPkgScreen extends StatelessWidget {
   SelectPkgScreen({super.key});
 
@@ -139,8 +138,7 @@ class SelectPkgScreen extends StatelessWidget {
 
   Widget _buildAppliedFilters() {
     return Obx(() {
-      final hasFilters =
-          controller.selectedSector.value != 'all' ||
+      final hasFilters = controller.selectedSector.value != 'all' ||
           controller.selectedAirline.value != 'all' ||
           controller.selectedDate.value != 'all';
 
@@ -154,11 +152,10 @@ class SelectPkgScreen extends StatelessWidget {
           children: [
             if (controller.selectedSector.value != 'all')
               _buildFilterChip(
-                label:
-                    controller.sectorOptions.firstWhere(
-                      (option) =>
-                          option['value'] == controller.selectedSector.value,
-                    )['label']!,
+                label: controller.sectorOptions.firstWhere(
+                  (option) =>
+                      option['value'] == controller.selectedSector.value,
+                )['label']!,
                 onDeleted: () => controller.updateSector('all'),
               ),
             if (controller.selectedAirline.value != 'all')
@@ -262,7 +259,7 @@ class SelectPkgScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                     Text(
+                    Text(
                       'Filters',
                       style: TextStyle(
                         fontSize: 20,
@@ -272,7 +269,7 @@ class SelectPkgScreen extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: controller.resetFilters,
-                      child:  Text(
+                      child: Text(
                         'Clear All',
                         style: TextStyle(fontSize: 14, color: TColors.third),
                       ),
@@ -341,21 +338,20 @@ class SelectPkgScreen extends StatelessWidget {
   }
 
   Widget _buildAirlineFilterSection() {
-    final airlineOptions =
-        controller.groupFlights
-            .map(
-              (flight) => flight['airline']['airline_name'] as String,
-            ) // Cast to String
-            .toSet()
-            .toList()
-            .map(
-              (airline) => <String, String>{
-                // Explicitly create Map<String, String>
-                'label': airline,
-                'value': airline.toLowerCase(),
-              },
-            )
-            .toList();
+    final airlineOptions = controller.groupFlights
+        .map(
+          (flight) => flight['airline']['airline_name'] as String,
+        ) // Cast to String
+        .toSet()
+        .toList()
+        .map(
+          (airline) => <String, String>{
+            // Explicitly create Map<String, String>
+            'label': airline,
+            'value': airline.toLowerCase(),
+          },
+        )
+        .toList();
 
     return _buildFilterSection(
       title: 'Airlines',
@@ -369,20 +365,18 @@ class SelectPkgScreen extends StatelessWidget {
   }
 
   Widget _buildDateFilterSection() {
-    final dateOptions =
-        controller.groupFlights
-            .map((flight) => flight['dept_date'] as String) // Cast to String
-            .toSet()
-            .toList()
-            .map((date) {
-              final formattedDate = DateFormat('yyyy-MM-dd').parse(date);
-              return <String, String>{
-                // Explicitly create Map<String, String>
-                'label': DateFormat('dd MMM yyyy').format(formattedDate),
-                'value': date,
-              };
-            })
-            .toList();
+    final dateOptions = controller.groupFlights
+        .map((flight) => flight['dept_date'] as String) // Cast to String
+        .toSet()
+        .toList()
+        .map((date) {
+      final formattedDate = DateFormat('yyyy-MM-dd').parse(date);
+      return <String, String>{
+        // Explicitly create Map<String, String>
+        'label': DateFormat('dd MMM yyyy').format(formattedDate),
+        'value': date,
+      };
+    }).toList();
 
     return _buildFilterSection(
       title: 'Departure Dates',
@@ -417,36 +411,35 @@ class SelectPkgScreen extends StatelessWidget {
           () => Wrap(
             spacing: 10,
             runSpacing: 10,
-            children:
-                options.map((option) {
-                  final isSelected = currentValue.value == option['value'];
-                  return GestureDetector(
-                    onTap: () => onSelect(option['value']!),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected ? TColors.third : TColors.background,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? TColors.third : Colors.grey[300]!,
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        option['label']!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isSelected ? TColors.white : TColors.text,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
+            children: options.map((option) {
+              final isSelected = currentValue.value == option['value'];
+              return GestureDetector(
+                onTap: () => onSelect(option['value']!),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? TColors.third : TColors.background,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected ? TColors.third : Colors.grey[300]!,
+                      width: 1,
                     ),
-                  );
-                }).toList(),
+                  ),
+                  child: Text(
+                    option['label']!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isSelected ? TColors.white : TColors.text,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -653,10 +646,10 @@ class SelectPkgScreen extends StatelessWidget {
               children: [
                 Text(
                   segment.departureTime,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: TColors.background,
+                    color: TColors.primary,
                   ),
                 ),
                 Text(
@@ -750,7 +743,7 @@ class SelectPkgScreen extends StatelessWidget {
                   ),
                   child: Text(
                     segment.flightNumber,
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: TColors.primary,
@@ -769,10 +762,10 @@ class SelectPkgScreen extends StatelessWidget {
               children: [
                 Text(
                   segment.arrivalTime,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: TColors.background,
+                    color: TColors.primary,
                   ),
                 ),
                 Text(
@@ -917,7 +910,7 @@ class SelectPkgScreen extends StatelessWidget {
                     TextSpan(
                       text:
                           '${flight.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         color: TColors.primary,
                         fontWeight: FontWeight.bold,
@@ -1068,7 +1061,7 @@ class SelectPkgScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       '${flight.seats} seats',
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: TColors.primary,
@@ -1086,7 +1079,7 @@ class SelectPkgScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       flight.baggage,
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: TColors.third,
@@ -1104,7 +1097,7 @@ class SelectPkgScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       flight.meal,
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: TColors.secondary,
@@ -1130,7 +1123,7 @@ class SelectPkgScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Total Journey: ${flight.segments.first.origin} → ${flight.segments.last.destination}',
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: TColors.primary,
